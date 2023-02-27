@@ -1,21 +1,9 @@
 package contacts;
 
-import java.time.LocalDate;
-
 public class Contact {
-    protected String name;
-    protected String surname;
-    protected String phone;
-
-    protected String address;
-    protected LocalDate birth;
-    protected String gender;
-
-    public Contact(String name, String surname, String phone) {
-        this.name = name;
-        this.surname = surname;
-        this.phone = phone;
-    }
+    private String name;
+    private String surname;
+    private String phone;
 
     public Contact() {
     }
@@ -42,29 +30,5 @@ public class Contact {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public LocalDate getBirth() {
-        return birth;
-    }
-
-    public void setBirth(LocalDate birth) {
-        this.birth = birth;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 }
