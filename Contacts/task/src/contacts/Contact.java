@@ -1,9 +1,12 @@
 package contacts;
 
-public class Contact {
+import java.time.LocalDateTime;
+
+public abstract class Contact {
     private String name;
-    private String surname;
     private String phone;
+    private LocalDateTime timeCreated;
+    private LocalDateTime lastEdit;
 
     public Contact() {
     }
@@ -16,14 +19,6 @@ public class Contact {
         this.name = name;
     }
 
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -31,4 +26,26 @@ public class Contact {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public LocalDateTime getTimeCreated() {
+        return timeCreated;
+    }
+
+    public void setTimeCreated(LocalDateTime timeCreated) {
+        this.timeCreated = timeCreated;
+    }
+
+    public LocalDateTime getLastEdit() {
+        return lastEdit;
+    }
+
+    public void setLastEdit(LocalDateTime lastEdit) {
+        this.lastEdit = lastEdit;
+    }
+
+    public abstract String getType();
+
+    public abstract String getFullName();
+
+    public abstract String toString();
 }
