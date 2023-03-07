@@ -10,16 +10,17 @@ public class App {
     Scanner scanner = new Scanner(System.in);
     ArrayList<Contact> contacts = new ArrayList<>();
     Validator validator = new Validator();
+    Printer printer = new Printer();
     public void mainMenu() {
         while (true) {
             switch (mainMenuAction()) {
                 case "add" -> addContact(enterType());
                 case "list" -> {
-                    printContacts(contacts);
+                    printer.printContacts(contacts);
                     listMenu();
                 }
                 case "search" -> searchContact();
-                case "count" -> countContacts();
+                case "count" -> printer.countContacts(contacts);
                 case "exit" -> {
                     System.exit(0);
                 }
@@ -53,7 +54,7 @@ public class App {
         if (action.equals("back")) {
             mainMenu();
         } else if (digits.matcher(action).find()) {
-            printInfo(contacts.get(Integer.parseInt(action) - 1));
+            printer.printInfo(contacts.get(Integer.parseInt(action) - 1));
             recordMenu(contacts.get(Integer.parseInt(action) - 1));
         } else {
             System.out.println("Wrong action!");
@@ -237,7 +238,7 @@ public class App {
             }
         }
         System.out.println("Found " + foundContacts.size() + " results:");
-        printContacts(foundContacts);
+        printer.printContacts(foundContacts);
 
         System.out.print("[search] Enter action ([number], back, again): ");
         String action = scanner.nextLine();
@@ -268,25 +269,6 @@ public class App {
             }
         }
         System.out.println("lol");
-    }
-
-    private void countContacts() {
-        System.out.println("The Phone Book has " + contacts.size() + " records.\n");
-    }
-
-    private void printContacts(ArrayList<Contact> contacts) {
-        for (Contact item : contacts) {
-            if (item.getType().equals("person")) {
-                System.out.println((contacts.indexOf(item) + 1) + ". " + item.getFullName());
-            } else if (item.getType().equals("organization")) {
-                System.out.println((contacts.indexOf(item) + 1) + ". " + item.getFullName());
-            }
-        }
-        System.out.println();
-    }
-
-    private void printInfo(Contact contact) {
-        System.out.println(contact.toString());
     }
 
 //    public void save(ArrayList contacts) {
