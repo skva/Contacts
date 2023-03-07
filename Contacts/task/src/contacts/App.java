@@ -87,25 +87,4 @@ public class App {
             }
         }
     }
-
-//    public void save(ArrayList contacts) {
-//        try (FileOutputStream fos = new FileOutputStream(FileController.name);
-//             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-//            oos.writeObject(contacts);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    // TODO
-//    public void load() {
-//        try (FileInputStream fis = new FileInputStream("phonebook");
-//             ObjectInputStream ois = new ObjectInputStream(fis)) {
-//            contacts = (ArrayList) ois.readObject();
-//        } catch (IOException ioe) {
-//            ioe.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }

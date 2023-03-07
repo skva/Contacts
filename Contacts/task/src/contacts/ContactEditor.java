@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class ContactEditor {
     Scanner scanner = new Scanner(System.in);
     Validator validator = new Validator();
+    FileController fileController = new FileController();
 
     public void addContact(String type) {
         if (type.equals("person")) {
@@ -50,7 +51,7 @@ public class ContactEditor {
         person.setTimeCreated(LocalDateTime.now().withSecond(0).withNano(0));
         person.setLastEdit(LocalDateTime.now().withSecond(0).withNano(0));
         App.contacts.add(person);
-//        save(contacts);
+        fileController.save(App.contacts);
         System.out.println("The record added.\n");
     }
 

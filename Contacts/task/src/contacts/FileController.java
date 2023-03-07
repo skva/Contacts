@@ -1,28 +1,43 @@
 package contacts;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 
 public class FileController {
-    private static File file;
-    public static String name;
+    public static File file;
+
     public void createFile(String filename) {
-        if (filename != null) {
-            file = new File(filename);
-            try {
-                if (file.createNewFile()) {
-
-                } else {
-                    // TODO load from file
-
-                    System.out.println("open " + filename);
-                }
+        file = new File(filename);
+        try {
+            if (file.createNewFile()) {
+                System.out.println("open " + filename);
+            } else {
+                load(filename);
+                System.out.println("open " + filename);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void save(ArrayList contacts) {
+        if (FileController.file != null) {
+            try (FileOutputStream fos = new FileOutputStream(FileController.file.getName());
+                 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                oos.writeObject(contacts);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-            file = null;
         }
-        name = filename;
+    }
+
+    public void load(String filename) {
+        try (FileInputStream fis = new FileInputStream(filename);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            App.contacts = (ArrayList) ois.readObject();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
