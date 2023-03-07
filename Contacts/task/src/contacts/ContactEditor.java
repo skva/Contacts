@@ -66,6 +66,7 @@ public class ContactEditor {
         organization.setTimeCreated(LocalDateTime.now().withSecond(0).withNano(0));
         organization.setLastEdit(LocalDateTime.now().withSecond(0).withNano(0));
         App.contacts.add(organization);
+        fileController.save(App.contacts);
         System.out.println("The record added.\n");
     }
 
@@ -128,6 +129,7 @@ public class ContactEditor {
             }
         }
         person.setLastEdit(LocalDateTime.now().withSecond(0).withNano(0));
+        fileController.save(App.contacts);
         System.out.println("The record updated.\n");
     }
 
@@ -159,6 +161,7 @@ public class ContactEditor {
             }
         }
         organization.setLastEdit(LocalDateTime.now().withSecond(0).withNano(0));
+        fileController.save(App.contacts);
         System.out.println("The record updated.\n");
     }
 
@@ -167,6 +170,7 @@ public class ContactEditor {
             System.out.println("No records to remove!");
         } else {
             App.contacts.remove(contact);
+            fileController.save(App.contacts);
             System.out.println("The record removed!\n");
         }
     }
