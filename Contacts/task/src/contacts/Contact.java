@@ -1,8 +1,9 @@
 package contacts;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public abstract class Contact {
+public abstract class Contact implements Serializable {
     private String name;
     private String phone;
     private LocalDateTime timeCreated;
@@ -48,4 +49,6 @@ public abstract class Contact {
     public abstract String getFullName();
 
     public abstract String toString();
+
+    public abstract String getAllFields();
 }

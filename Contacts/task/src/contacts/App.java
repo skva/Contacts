@@ -1,37 +1,63 @@
 package contacts;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class App {
     Scanner scanner = new Scanner(System.in);
     ArrayList<Contact> contacts = new ArrayList<>();
-
-    public void startApp() {
+    Validator validator = new Validator();
+    public void mainMenu() {
         while (true) {
-            switch (enterAction()) {
+            switch (mainMenuAction()) {
                 case "add" -> addContact(enterType());
-                case "remove" -> removeContact();
-                case "edit" -> editContact();
-                case "count" -> countContacts();
-                case "info" -> {
-                    printContacts();
-                    printInfo();
+                case "list" -> {
+                    printContacts(contacts);
+                    listMenu();
                 }
+                case "search" -> searchContact();
+                case "count" -> countContacts();
                 case "exit" -> {
-                    return;
+                    System.exit(0);
                 }
                 default -> System.out.println("Wrong action!");
             }
         }
     }
 
-    private String enterAction() {
-        System.out.print("Enter action (add, remove, edit, count, info, exit): ");
+    private String mainMenuAction() {
+        System.out.print("[menu] Enter action (add, list, search, count, exit): ");
         return scanner.nextLine();
+    }
+
+    private void recordMenu(Contact contact) {
+        System.out.print("[record] Enter action (edit, delete, menu): ");
+        switch (scanner.nextLine()) {
+            case "edit" -> editContact(contact);
+            case "delete" -> {
+                removeContact(contact);
+                recordMenu(contact);
+            }
+            case "menu" -> mainMenu();
+            default -> System.out.println("Wrong action!");
+        }
+    }
+
+    private void listMenu() {
+        System.out.print("Enter action ([number], back): ");
+        String action = scanner.nextLine();
+        Pattern digits = Pattern.compile("[0-9]");
+        if (action.equals("back")) {
+            mainMenu();
+        } else if (digits.matcher(action).find()) {
+            printInfo(contacts.get(Integer.parseInt(action) - 1));
+            recordMenu(contacts.get(Integer.parseInt(action) - 1));
+        } else {
+            System.out.println("Wrong action!");
+        }
     }
 
     private String enterType() {
@@ -57,14 +83,14 @@ public class App {
         person.setSurname(scanner.nextLine());
         System.out.print("Enter the birth date: ");
         String birthdate = scanner.nextLine();
-        if (isValidBirthDate(birthdate)) {
+        if (validator.isValidBirthDate(birthdate)) {
             person.setBirthdate(LocalDate.parse(birthdate));
         } else {
             System.out.println("Wrong date format!");
         }
         System.out.print("Enter the gender (M, F): ");
         String gender = scanner.nextLine();
-        if (isValidGender(gender)) {
+        if (validator.isValidGender(gender)) {
             person.setGender(gender);
         } else {
             System.out.println("Wrong gender format!");
@@ -72,7 +98,7 @@ public class App {
         }
         System.out.print("Enter the number: ");
         String phone = scanner.nextLine();
-        if (isValidPhone(phone)) {
+        if (validator.isValidPhone(phone)) {
             person.setPhone(phone);
         } else {
             System.out.println("Wrong number format!");
@@ -81,6 +107,7 @@ public class App {
         person.setTimeCreated(LocalDateTime.now().withSecond(0).withNano(0));
         person.setLastEdit(LocalDateTime.now().withSecond(0).withNano(0));
         contacts.add(person);
+//        save(contacts);
         System.out.println("The record added.\n");
     }
 
@@ -98,28 +125,14 @@ public class App {
         System.out.println("The record added.\n");
     }
 
-    private void removeContact() {
-        if (contacts.size() == 0) {
-            System.out.println("No records to remove!");
-        } else {
-            printContacts();
-            System.out.print("Select a record: ");
-            contacts.remove(Integer.parseInt(scanner.nextLine()) - 1);
-            System.out.println("The record removed!\n");
-        }
-    }
-
-    private void editContact() {
+    private void editContact(Contact contact) {
         if (contacts.size() == 0) {
             System.out.println("No records to edit!");
         } else {
-            printContacts();
-            System.out.print("Select a record: ");
-            int index = Integer.parseInt(scanner.nextLine()) - 1;
-            if (contacts.get(index).getType().equals("person")) {
-                editPerson(contacts.get(index));
+            if (contacts.get(contacts.indexOf(contact)).getType().equals("person")) {
+                editPerson(contact);
             } else {
-                editOrganization(contacts.get(index));
+                editOrganization(contact);
             }
         }
     }
@@ -139,7 +152,7 @@ public class App {
             case "birth" -> {
                 System.out.print("Enter birth date: ");
                 String birthdate = scanner.nextLine();
-                if (isValidBirthDate(birthdate)) {
+                if (validator.isValidBirthDate(birthdate)) {
                     person.setBirthdate(LocalDate.parse(birthdate));
                 } else {
                     System.out.println("Wrong date format!");
@@ -148,7 +161,7 @@ public class App {
             case "gender" -> {
                 System.out.print("Enter gender: ");
                 String gender = scanner.nextLine();
-                if (isValidGender(gender)) {
+                if (validator.isValidGender(gender)) {
                     person.setGender(gender);
                 } else {
                     System.out.println("Wrong gender format!");
@@ -158,7 +171,7 @@ public class App {
             case "number" -> {
                 System.out.print("Enter number: ");
                 String phone = scanner.nextLine();
-                if (isValidPhone(phone)) {
+                if (validator.isValidPhone(phone)) {
                     person.setPhone(phone);
                 } else {
                     System.out.println("Wrong number format!");
@@ -189,7 +202,7 @@ public class App {
             case "number" -> {
                 System.out.println("Enter number: ");
                 String phone = scanner.nextLine();
-                if (isValidPhone(phone)) {
+                if (validator.isValidPhone(phone)) {
                     organization.setPhone(phone);
                 } else {
                     System.out.println("Wrong number format!");
@@ -205,11 +218,63 @@ public class App {
         System.out.println("The record updated.\n");
     }
 
-    private void countContacts() {
-        System.out.println("The Phone Book has " + contacts.size() + " records.");
+    private void removeContact(Contact contact) {
+        if (contacts.size() == 0) {
+            System.out.println("No records to remove!");
+        } else {
+            contacts.remove(contact);
+            System.out.println("The record removed!\n");
+        }
     }
 
-    private void printContacts() {
+    private void searchContact() {
+        ArrayList<Contact> foundContacts = new ArrayList<>();
+        System.out.print("Enter search query: ");
+        String query = scanner.nextLine();
+        for (Contact item : contacts) {
+            if (item.getAllFields().contains(query.toLowerCase())) {
+                foundContacts.add(item);
+            }
+        }
+        System.out.println("Found " + foundContacts.size() + " results:");
+        printContacts(foundContacts);
+
+        System.out.print("[search] Enter action ([number], back, again): ");
+        String action = scanner.nextLine();
+        Pattern digits = Pattern.compile("[0-9]");
+        if (action.equals("back")) {
+            return;
+        } else if (action.equals("again")) {
+            searchContact();
+        } else if (digits.matcher(action).find()) {
+            recordMenu(contacts.get(Integer.parseInt(action) - 1));
+        } else {
+            System.out.println("Wrong action!");
+        }
+
+        switch (scanner.nextLine()) {
+            case "1" -> {
+                System.out.println("Here will be search");
+            }
+            case "back" -> {
+                return;
+            }
+            case "again" -> {
+                searchContact();
+            }
+            default -> {
+                System.out.println("Wrong action!");
+                return;
+            }
+        }
+        System.out.println("lol");
+    }
+
+    private void countContacts() {
+        System.out.println("The Phone Book has " + contacts.size() + " records.\n");
+    }
+
+    private void printContacts(ArrayList<Contact> contacts) {
         for (Contact item : contacts) {
             if (item.getType().equals("person")) {
                 System.out.println((contacts.indexOf(item) + 1) + ". " + item.getFullName());
@@ -217,32 +282,31 @@ public class App {
                 System.out.println((contacts.indexOf(item) + 1) + ". " + item.getFullName());
             }
         }
+        System.out.println();
     }
 
-    private void printInfo() {
-        System.out.print("Enter index to show info: ");
-        int index = Integer.parseInt(scanner.nextLine()) - 1;
-        if (contacts.get(index).getType().equals("person")) {
-            System.out.println(contacts.get(index).toString());
-        } else if (contacts.get(index).getType().equals("organization")) {
-            System.out.println(contacts.get(index).toString());
-        }
+    private void printInfo(Contact contact) {
+        System.out.println(contact.toString());
     }
 
-    private boolean isValidPhone(String number) {
-        return number.matches("\\+?(\\([0-9a-zA-Z]+\\)|[0-9a-zA-Z]+([ -][(][0-9a-zA-Z]{2,}[)])?)([ -][0-9a-zA-Z]{2,})*");
-    }
+//    public void save(ArrayList contacts) {
+//        try (FileOutputStream fos = new FileOutputStream(FileController.name);
+//             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+//            oos.writeObject(contacts);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    private boolean isValidBirthDate(String birthDate) {
-        try {
-            LocalDate.parse(birthDate);
-        } catch (DateTimeException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isValidGender(String gender) {
-        return gender.equals("M") || gender.equals("F");
-    }
+//    // TODO
+//    public void load() {
+//        try (FileInputStream fis = new FileInputStream("phonebook");
+//             ObjectInputStream ois = new ObjectInputStream(fis)) {
+//            contacts = (ArrayList) ois.readObject();
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

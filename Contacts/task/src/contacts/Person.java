@@ -1,8 +1,9 @@
 package contacts;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Person extends Contact{
+public class Person extends Contact implements Serializable {
     private String surname;
     private LocalDate birthdate;
     private String gender;
@@ -54,5 +55,13 @@ public class Person extends Contact{
                 + "Number: " + getPhone() + "\n"
                 + "Time created: " + getTimeCreated() + "\n"
                 + "Time last edit: " + getLastEdit() + "\n";
+    }
+
+    @Override
+    public String getAllFields() {
+        String birthDate = getBirthdate() == null ? "[no data]" : getBirthdate().toString();
+        return getName().toLowerCase() + " " + getSurname().toLowerCase() + " "
+                + birthDate.toLowerCase() + " "
+                + getGender().toLowerCase() + " " + getPhone().toLowerCase();
     }
 }
